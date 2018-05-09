@@ -406,6 +406,7 @@ public class SocketHttpHelper {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+        //添加自定义handler并启动 可以指定端口号
         new SocketHttpHelper()
                 .addHandlerByClass(HomeHandler.class)
                 .start();

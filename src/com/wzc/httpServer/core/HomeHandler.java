@@ -10,6 +10,11 @@ import java.util.List;
 
 public class HomeHandler {
 
+    @Handler(value = {"/", "/index"})
+    public Object index(Request request) {
+        return RespData.success("this is index!");
+    }
+
     @Handler(value = "/resp")
     public Object resp(Request request) {
         return RespData.success("ok");
