@@ -203,6 +203,7 @@ public class SocketHttpHelper {
     private Request resolveRequest(InputStream is, OutputStream os) throws IOException {
         Request request = new Request();
         request.headers = new HashMap<>();
+        request.params = new HashMap<>();
 
         ByteArrayOutputStream bosHeader = new ByteArrayOutputStream();
         ByteArrayOutputStream bosBody = new ByteArrayOutputStream();
@@ -268,30 +269,76 @@ public class SocketHttpHelper {
                         }
 
                         if (contentLen > 0) {
-                            byte[] buffer = new byte[1024];
-                            int l = -1;
-                            while ((l = is.read(buffer)) != -1) {
-                                bosBody.write(buffer, 0, l);
-                                if (l < buffer.length) {
-                                    break;
+                            //两种情况 普通传值 和 上传文件
+                            request.isUploadFile = request.getHeaders().containsKey("content-type")
+                                    && request.getHeaders().get("content-type").contains("multipart/form-data");
+                            if (request.isUploadFile) {
+                                //如何解析文件，都塞到内存？ 暂时支持小文件吧，写内存中
+                                String boundary = resolveBoundary(request.getHeaders().get("content-type"));
+                                if (boundary != null && boundary.length() > 0) {
+                                    byte[] allFileAndParamsBuffer = new byte[contentLen];
+                                    is.read(allFileAndParamsBuffer);
+                                    //需要根据分隔符进行分隔；
+                                    SimpleTools.splitBytes(allFileAndParamsBuffer, ("--"+boundary).getBytes("utf-8"), new SimpleTools.OnSplitByte() {
+                                        @Override
+                                        public boolean onSplitByte(byte[] source, byte[] breaker, int i, byte[] block) {
+                                            //获取到的进行处理
+                                            if (i >= source.length) return false;
+                                            if(block.length==0)return true;
+
+                                            //第一行
+                                            FileParam fileParam = FileParam.resolveBlockData(block, "utf-8",breaker.length);
+                                            if (fileParam.isFile()) {
+                                                if (request.getFileParams() == null)
+                                                    request.setFileParams(new HashMap<>());
+                                                List<FileParam> fileList = request.getFileParams().get(fileParam.getName());
+                                                if (fileList == null) {
+                                                    fileList = new ArrayList<>();
+                                                    request.getFileParams().put(fileParam.getName(), fileList);
+                                                }
+                                                fileList.add(fileParam);
+                                            } else {
+                                                List<String> param = request.getParams().get(fileParam.getName());
+                                                if (param == null) {
+                                                    param = new ArrayList<>();
+                                                    request.getParams().put(fileParam.getName(), param);
+                                                }
+                                                param.add(fileParam.getStringValue());
+                                            }
+
+                                            return true;
+                                        }
+                                    });
+
                                 }
+
+                            } else {
+                                int bufferLen = 2048;
+                                if (contentLen % bufferLen == bufferLen) {//如果整除，可能会出现无法正好读完还在等待的情况。
+                                    bufferLen += 1;
+                                }
+                                byte[] buffer = new byte[bufferLen];
+                                int l = -1;
+                                while ((l = is.read(buffer)) != -1) {
+                                    bosBody.write(buffer, 0, l);
+                                    if (l < buffer.length) {
+                                        break;
+                                    }
+                                }
+                                bosBody.flush();
+                                request.body = bosBody.toString("utf-8");
                             }
+
                         }
 
                     } catch (Exception ex) {
 
                     } finally {
-                        if (bosBody.size() > 0) {
-                            bosBody.flush();
-                            request.body = bosBody.toString("utf-8");
-                        }
                         closeClosable(bosBody);
                     }
                 }
             }
-
-
-            request.params = resolveParams(request.uri, request.headers, request.body);
+            resolveParams(request.params, request.uri, request.headers, request.body);
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -299,6 +346,29 @@ public class SocketHttpHelper {
         }
 
         return request;
+    }
+
+    /**
+     * 获取分隔符
+     *
+     * @param contentType
+     * @return
+     */
+    private String resolveBoundary(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        String blocks[] = contentType.split(";");
+        for (String block : blocks) {
+            if (block.contains("=") && block.trim().startsWith("boundary")) {
+                String boundarKV[] = block.trim().split("=");
+                if (boundarKV.length == 2) {
+                    return boundarKV[1].trim();
+                }
+                break;
+            }
+        }
+        return null;
     }
 
     private void resolveHeader(ByteArrayOutputStream bosHeader, Request request) {
@@ -343,33 +413,37 @@ public class SocketHttpHelper {
     }
 
 
-    private static HashMap<String, String> resolveParams(String uri, HashMap<String, String> headers, String bodyStr) {
-        HashMap<String, String> map = new HashMap<>();
+    private static void resolveParams(HashMap<String, List<String>> params, String uri, HashMap<String, String> headers, String bodyStr) {
         if (uri != null) {
             int uriParamsIndex = uri.indexOf("?");
 
             if (uriParamsIndex > -1) {
                 String paramsStr = uri.substring(uriParamsIndex + 1);
-                resolveUrlEncodeParams(map, paramsStr);
+                resolveUrlEncodeParams(params, paramsStr);
             }
         }
 
         String contentType = headers.get("content-type");
         if (contentType != null && contentType.contains("application/x-www-form-urlencoded")) {
-            resolveUrlEncodeParams(map, bodyStr);
+            resolveUrlEncodeParams(params, bodyStr);
         }
-        return map;
     }
 
-    private static void resolveUrlEncodeParams(HashMap<String, String> map, String paramsStr) {
-        if (map == null || paramsStr == null) return;
+    private static void resolveUrlEncodeParams(HashMap<String, List<String>> params, String paramsStr) {
+        if (params == null || paramsStr == null) return;
         try {
             paramsStr = URLDecoder.decode(paramsStr, "utf-8");
             String[] kvGroup = paramsStr.split("&");
             for (String kv : kvGroup) {
                 String[] kvArr = kv.split("=");
-                if (kvArr.length == 2)
-                    map.put(kvArr[0], kvArr[1]);
+                if (kvArr.length == 2) {
+                    List<String> paramList = params.get(kvArr[0]);
+                    if (paramList == null) {
+                        paramList = new ArrayList<>();
+                        params.put(kvArr[0], paramList);
+                    }
+                    paramList.add(kvArr[1]);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

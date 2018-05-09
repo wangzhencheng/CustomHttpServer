@@ -125,7 +125,7 @@ public class Response {
                 if (body instanceof String) {
                     headers.put("Content-Type", defaultContentType);
                     headers.put("Content-Length", "" + ((String) body).getBytes(charset).length);
-                    headers.put("Transfer-Encoding", "chunked");
+//                    headers.put("Transfer-Encoding", "chunked");
                 }
                 if (body instanceof InputStream) {
                     headers.put("Content-Type", binaryContentType);
@@ -267,9 +267,10 @@ public class Response {
             if (body != null) {
                 if (body instanceof String) {
                     String bodyString = String.valueOf(body);
-                    printWriter.write((Integer.toHexString(bodyString.getBytes(charset).length) + "\r\n"));
-                    printWriter.write((bodyString + "\r\n"));
-                    responseBodyOver(printWriter);
+                    printWriter.write((bodyString));
+//                    printWriter.write((Integer.toHexString(bodyString.getBytes(charset).length) + "\r\n"));
+//                    printWriter.write((bodyString + "\r\n"));
+//                    responseBodyOver(printWriter);
                 } else if (body instanceof InputStream) {
                     InputStream inputStream = (InputStream) body;
                     responseInputStream(inputStream, os);

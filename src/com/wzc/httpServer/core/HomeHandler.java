@@ -12,6 +12,11 @@ public class HomeHandler {
 
     @Handler(value = {"/", "/index"})
     public Object index(Request request) {
+        if (request.getFileParams() != null && request.getFileParams().size() > 0) {
+            for (FileParam fileParam : request.getAllFileParams()) {
+                fileParam.transferFile("C:\\Users\\Administrator\\Desktop\\新建文件夹\\ceshi\\" + fileParam.getFileName());
+            }
+        }
         return RespData.success("this is index!");
     }
 
@@ -32,7 +37,7 @@ public class HomeHandler {
 
     @Handler("/fileList")
     public Object fileList(Request request) {
-        String path = request.getParams().get("path");
+        String path = request.getParam("path");
 
         System.out.println("fileList:" + path);
 
@@ -68,6 +73,7 @@ public class HomeHandler {
 
         return map;
     }
+
 
 
 }
