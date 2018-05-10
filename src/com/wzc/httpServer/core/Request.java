@@ -30,6 +30,29 @@ public class Request {
         this.outputStream = outputStream;
     }
 
+    public Integer getIntParam(String name) {
+        if (this.params == null || this.params.isEmpty()) return null;
+        List<String> values = this.params.get(name);
+        if (null != values && values.size() > 0) {
+            try {
+                return Integer.parseInt(values.get(0));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
+    public FileParam getFile(String name) {
+        if (this.fileParams == null || this.fileParams.isEmpty()) return null;
+        List<FileParam> files = this.fileParams.get(name);
+        if (files != null && files.size() > 0) {
+            return files.get(0);
+        }
+        return null;
+    }
+
     public void setUploadFile(boolean uploadFile) {
         isUploadFile = uploadFile;
     }

@@ -176,7 +176,7 @@ public class SocketHttpHelper {
                 try {
                     //获取HTTP请求头
                     is = socket.getInputStream();
-                    System.out.println("is len:" + is.available());
+//                    System.out.println("is len:" + is.available());
                     os = socket.getOutputStream();
                     Response response = onRequest(resolveRequest(is, os));
                     responseSocket(os, response);
@@ -376,7 +376,7 @@ public class SocketHttpHelper {
             request.headers = new HashMap<>();
         try {
 
-            System.out.println("got header over!");
+//            System.out.println("got header over!");
             //header 结束
             bosHeader.flush();
             String line = null;

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 public class HandlerAnnotationHandler implements SocketHttpHelper.UrlHandler {
     private String[] urls;
@@ -67,7 +68,13 @@ public class HandlerAnnotationHandler implements SocketHttpHelper.UrlHandler {
     @Override
     public Response onRequest(Request request) {
         try {
-            Object rsObj = method.invoke(object, request);
+            Object rsObj = null;
+            Parameter[] parameters = method.getParameters();
+            if (parameters == null || parameters.length == 0) {
+                rsObj = method.invoke(object);
+            } else {
+                rsObj = method.invoke(object, request);
+            }
             if (rsObj != null) {
                 if (rsObj instanceof Response) {
                     return (Response) rsObj;

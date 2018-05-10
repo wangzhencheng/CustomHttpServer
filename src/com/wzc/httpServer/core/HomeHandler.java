@@ -4,9 +4,7 @@ import com.wzc.httpServer.common.RespData;
 import com.wzc.httpServer.common.SimpleTools;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class HomeHandler {
 
@@ -35,26 +33,11 @@ public class HomeHandler {
         return file;
     }
 
-    @Handler("/fileList")
-    public Object fileList(Request request) {
-        String path = request.getParam("path");
-
-        System.out.println("fileList:" + path);
-
-        File file = new File(path.trim());
-        File[] subFiles = file.listFiles();
-
-        System.out.println("fileList:" + subFiles);
-        List<String> fileNames = new ArrayList<String>();
-        if (subFiles != null) {
-            for (File f : subFiles) {
-                fileNames.add(f.getName());
-            }
-        }
+    @Handler("/testParams")
+    public Object testParams(Request request) {
 
         HashMap map = new HashMap();
         map.put("code", 200);
-        map.put("data", fileNames);
 
         return map;
     }
@@ -73,7 +56,6 @@ public class HomeHandler {
 
         return map;
     }
-
 
 
 }
