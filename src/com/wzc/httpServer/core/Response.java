@@ -1,5 +1,6 @@
 package com.wzc.httpServer.core;
 
+import com.wzc.httpServer.common.CustomJsonMapper;
 import com.wzc.httpServer.common.SimpleTools;
 
 import java.io.*;
@@ -26,10 +27,28 @@ public class Response {
      */
     public Response(int code, String message, Object body) {
         init();
+        body=fixBody(body);
         this.code = code;
         this.message = message;
         this.body = body;
         headers.putAll(resolveHeader(body));
+    }
+
+    /**
+     * 只支持字符串 文件 输入流。其他格式转成对应支持的格式，或者使用OutputStream自行输出
+     * @param body
+     * @return
+     */
+    private Object fixBody(Object body) {
+        if (null != body) {
+            if (!(body instanceof String)
+                    && !(body instanceof File)
+                    && !(body instanceof InputStream)
+                    ) {
+                body = CustomJsonMapper.getDefault().writeValueAsString(body);
+            }
+        }
+        return body;
     }
 
     /**
@@ -111,15 +130,16 @@ public class Response {
         return headers;
     }
 
-    public static HashMap<String, String> resolveHeader(Object body){
-        return resolveHeader(body,"UTF-8");
+    public static HashMap<String, String> resolveHeader(Object body) {
+        return resolveHeader(body, "UTF-8");
     }
+
     // url
-    public static HashMap<String, String> resolveHeader(Object body,String charset) {
+    public static HashMap<String, String> resolveHeader(Object body, String charset) {
         HashMap<String, String> headers = new HashMap<>();
         try {
             //response.setHeader("content-disposition", "attachment;filename="+fileName);
-            String defaultContentType = "application/json;charset="+charset;
+            String defaultContentType = "application/json;charset=" + charset;
             String binaryContentType = "application/octet-stream";
             if (null != body) {
                 if (body instanceof String) {

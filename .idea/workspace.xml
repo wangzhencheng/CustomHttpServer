@@ -7,10 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c80f6747-eb34-4889-bb34-604e7fd82d5e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/artifacts/simple_http_jar.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/wzc/httpServer/core/HandlerAnnotationHandler.java" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/HandlerAnnotationHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/wzc/httpServer/core/SocketHttpHelper.java" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/SocketHttpHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/wzc/httpServer/core/Response.java" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/Response.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,12 +26,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SocketHttpHelper.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SocketHttpHelper.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/wzc/httpServer/core/SocketHttpHelper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="485" column="58" lean-forward="true" selection-start-line="485" selection-start-column="58" selection-end-line="485" selection-end-column="58" />
+            <state relative-caret-position="254">
+              <caret line="481" column="7" lean-forward="false" selection-start-line="481" selection-start-column="7" selection-end-line="481" selection-end-column="7" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Response.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/wzc/httpServer/core/Response.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="362">
+              <caret line="45" column="53" lean-forward="false" selection-start-line="45" selection-start-column="53" selection-end-line="45" selection-end-column="53" />
+              <folding>
+                <element signature="e#4133#4134#0" expanded="true" />
+                <element signature="e#4184#4185#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -42,7 +53,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/wzc/httpServer/core/HandlerAnnotationHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="80">
-              <caret line="10" column="31" lean-forward="true" selection-start-line="10" selection-start-column="31" selection-end-line="10" selection-end-column="31" />
+              <caret line="10" column="31" lean-forward="false" selection-start-line="10" selection-start-column="31" selection-end-line="10" selection-end-column="31" />
               <folding>
                 <element signature="e#699#700#0" expanded="true" />
                 <element signature="e#745#746#0" expanded="true" />
@@ -92,13 +103,13 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/src/com/wzc/httpServer/core/Response.java" />
         <option value="$PROJECT_DIR$/src/com/wzc/httpServer/core/FileParam.java" />
         <option value="$PROJECT_DIR$/src/com/wzc/httpServer/common/SimpleTools.java" />
         <option value="$PROJECT_DIR$/src/com/wzc/httpServer/core/Request.java" />
         <option value="$PROJECT_DIR$/src/com/wzc/httpServer/core/HomeHandler.java" />
         <option value="$PROJECT_DIR$/src/com/wzc/httpServer/core/HandlerAnnotationHandler.java" />
         <option value="$PROJECT_DIR$/src/com/wzc/httpServer/core/SocketHttpHelper.java" />
+        <option value="$PROJECT_DIR$/src/com/wzc/httpServer/core/Response.java" />
       </list>
     </option>
   </component>
@@ -253,6 +264,13 @@
               <item name="CustomHttpServer" type="462c0819:PsiDirectoryNode" />
               <item name="out" type="462c0819:PsiDirectoryNode" />
               <item name="artifacts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CustomHttpServer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CustomHttpServer" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="artifacts" type="462c0819:PsiDirectoryNode" />
+              <item name="simple_http_jar" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CustomHttpServer" type="b2602c69:ProjectViewProjectNode" />
@@ -461,7 +479,7 @@
       <workItem from="1525855646392" duration="625000" />
       <workItem from="1525871073685" duration="14219000" />
       <workItem from="1525949225733" duration="342000" />
-      <workItem from="1527219822221" duration="272000" />
+      <workItem from="1527219822221" duration="1724000" />
     </task>
     <task id="LOCAL-00001" summary="优化一下参数调用">
       <created>1525916785840</created>
@@ -470,11 +488,18 @@
       <option name="project" value="LOCAL" />
       <updated>1525916785840</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="添加异常回调">
+      <created>1527220114781</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1527220114781</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20208000" />
+    <option name="totallyTimeSpent" value="21660000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -492,7 +517,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21396054" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18816389" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="BPMNPalette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -518,7 +543,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="优化一下参数调用" />
-    <option name="LAST_COMMIT_MESSAGE" value="优化一下参数调用" />
+    <MESSAGE value="添加异常回调" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加异常回调" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -645,8 +671,8 @@
         <state relative-caret-position="105">
           <caret line="277" column="0" lean-forward="false" selection-start-line="277" selection-start-column="0" selection-end-line="277" selection-end-column="0" />
           <folding>
-            <element signature="e#5089#5090#0" expanded="false" />
-            <element signature="e#5126#5127#0" expanded="false" />
+            <element signature="e#4133#4134#0" expanded="true" />
+            <element signature="e#4184#4185#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -707,17 +733,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/wzc/httpServer/core/Response.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="556">
-          <caret line="269" column="52" lean-forward="false" selection-start-line="269" selection-start-column="52" selection-end-line="269" selection-end-column="52" />
-          <folding>
-            <element signature="e#5089#5090#0" expanded="false" />
-            <element signature="e#5126#5127#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../docTest-dynamic/java/docTest/DocController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
@@ -752,7 +767,7 @@
     <entry file="file://$PROJECT_DIR$/src/com/wzc/httpServer/core/HandlerAnnotationHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
-          <caret line="10" column="31" lean-forward="true" selection-start-line="10" selection-start-column="31" selection-end-line="10" selection-end-column="31" />
+          <caret line="10" column="31" lean-forward="false" selection-start-line="10" selection-start-column="31" selection-end-line="10" selection-end-column="31" />
           <folding>
             <element signature="e#699#700#0" expanded="true" />
             <element signature="e#745#746#0" expanded="true" />
@@ -762,9 +777,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/wzc/httpServer/core/SocketHttpHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="485" column="58" lean-forward="true" selection-start-line="485" selection-start-column="58" selection-end-line="485" selection-end-column="58" />
+        <state relative-caret-position="254">
+          <caret line="481" column="7" lean-forward="false" selection-start-line="481" selection-start-column="7" selection-end-line="481" selection-end-column="7" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/wzc/httpServer/core/Response.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="362">
+          <caret line="45" column="53" lean-forward="false" selection-start-line="45" selection-start-column="53" selection-end-line="45" selection-end-column="53" />
+          <folding>
+            <element signature="e#4133#4134#0" expanded="true" />
+            <element signature="e#4184#4185#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
