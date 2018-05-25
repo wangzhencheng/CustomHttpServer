@@ -103,9 +103,9 @@ public class SocketHttpHelper {
      *
      * @return
      */
-    public <T extends Object> SocketHttpHelper addHandlerByClass(Class mClass) {
+    public <T extends Object> SocketHttpHelper addHandlerByClass(Class mClass, HandlerAnnotationHandler.OnException onException) {
         try {
-            return addHandlerByObject(mClass.newInstance());
+            return addHandlerByObject(mClass.newInstance(), onException);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -117,7 +117,7 @@ public class SocketHttpHelper {
      *
      * @return
      */
-    public <T extends Object> SocketHttpHelper addHandlerByObject(T object) {
+    public <T extends Object> SocketHttpHelper addHandlerByObject(T object, HandlerAnnotationHandler.OnException onException) {
         try {
             Class mClass = object.getClass();
             //解析所有的方法，并获取方法上的注解
@@ -130,6 +130,7 @@ public class SocketHttpHelper {
                 HandlerAnnotationHandler handlerAnnotationHandler = new HandlerAnnotationHandler(
                         object, method, handler.value(), handler.method()
                 );
+                handlerAnnotationHandler.setOnException(onException);
                 addHandler(handlerAnnotationHandler);
             }
         } catch (Exception ex) {
@@ -279,15 +280,15 @@ public class SocketHttpHelper {
                                     byte[] allFileAndParamsBuffer = new byte[contentLen];
                                     is.read(allFileAndParamsBuffer);
                                     //需要根据分隔符进行分隔；
-                                    SimpleTools.splitBytes(allFileAndParamsBuffer, ("--"+boundary).getBytes("utf-8"), new SimpleTools.OnSplitByte() {
+                                    SimpleTools.splitBytes(allFileAndParamsBuffer, ("--" + boundary).getBytes("utf-8"), new SimpleTools.OnSplitByte() {
                                         @Override
                                         public boolean onSplitByte(byte[] source, byte[] breaker, int i, byte[] block) {
                                             //获取到的进行处理
                                             if (i >= source.length) return false;
-                                            if(block.length==0)return true;
+                                            if (block.length == 0) return true;
 
                                             //第一行
-                                            FileParam fileParam = FileParam.resolveBlockData(block, "utf-8",breaker.length);
+                                            FileParam fileParam = FileParam.resolveBlockData(block, "utf-8", breaker.length);
                                             if (fileParam.isFile()) {
                                                 if (request.getFileParams() == null)
                                                     request.setFileParams(new HashMap<>());
@@ -482,7 +483,7 @@ public class SocketHttpHelper {
     public static void main(String[] args) throws IOException {
         //添加自定义handler并启动 可以指定端口号
         new SocketHttpHelper()
-                .addHandlerByClass(HomeHandler.class)
+                .addHandlerByClass(HomeHandler.class,null)
                 .start();
     }
 }

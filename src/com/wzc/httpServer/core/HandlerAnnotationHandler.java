@@ -14,12 +14,17 @@ public class HandlerAnnotationHandler implements SocketHttpHelper.UrlHandler {
     private Object object;
     private Method method;
 
+    private OnException onException;
     //没有输出的相应。使用该值，需要自定义输出。
     private static final Response NO_RESPONSE = new Response(null) {
         @Override
         public void response(OutputStream os) {
         }
     };
+
+    public void setOnException(OnException onException) {
+        this.onException = onException;
+    }
 
     public HandlerAnnotationHandler(Object object, Method method, String[] urls, String[] methods) {
         this.object = object;
@@ -91,8 +96,14 @@ public class HandlerAnnotationHandler implements SocketHttpHelper.UrlHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            if (null != onException) {
+                return onException.onException(this, e);
+            }
             return new Response(500, "ERROR", String.valueOf(e));
         }
     }
 
+    public interface OnException {
+        Response onException(HandlerAnnotationHandler handler, Exception e);
+    }
 }
