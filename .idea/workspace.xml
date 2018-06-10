@@ -7,20 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c80f6747-eb34-4889-bb34-604e7fd82d5e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/resources/SimpleHttp.class" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/SimpleUse-win/readme.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/ArgsMap.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/ExitHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/PackTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/SimpleHttp.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/resources/readme.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/resources/run.vbs" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/resources/stop.vbs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/SimpleUse-win/CustomHttpServer.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CustomHttpServer.iml" afterPath="$PROJECT_DIR$/CustomHttpServer.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/wzc/httpServer/common/SimpleTools.java" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/common/SimpleTools.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/wzc/httpServer/core/SocketHttpHelper.java" afterPath="$PROJECT_DIR$/src/com/wzc/httpServer/core/SocketHttpHelper.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -356,6 +344,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15126051" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="GO_FMT" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -686,7 +675,7 @@
       <workItem from="1525855468574" duration="40000" />
       <workItem from="1525855646392" duration="625000" />
       <workItem from="1525871073685" duration="14277000" />
-      <workItem from="1528633501226" duration="10389000" />
+      <workItem from="1528633501226" duration="10458000" />
     </task>
     <task id="LOCAL-00001" summary="添加上传小型文件的功能">
       <created>1525886671634</created>
@@ -695,15 +684,21 @@
       <option name="project" value="LOCAL" />
       <updated>1525886671634</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="添加win下利用已有浏览器开发客户端的功能：&#10;参考SimpleUser-win:readme.txt">
+      <created>1528644129488</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1528644129488</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25331000" />
+    <option name="totallyTimeSpent" value="25400000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -718,7 +713,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995495" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19444445" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19444445" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14957266" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="BPMNPalette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -744,7 +739,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="添加上传小型文件的功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加上传小型文件的功能" />
+    <MESSAGE value="添加win下利用已有浏览器开发客户端的功能：&#10;参考SimpleUser-win:readme.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加win下利用已有浏览器开发客户端的功能：&#10;参考SimpleUser-win:readme.txt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
