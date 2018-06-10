@@ -4,9 +4,7 @@ import com.wzc.httpServer.common.SimpleTools;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URLDecoder;
+import java.net.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,7 +13,9 @@ import java.util.concurrent.Executors;
  * 简易简单粗暴的本地HttpServer，用法如下：
  * new SocketHttpHelper()
  * .addHandlerByClass(HomeHandler.class)
+ * .setAutoExit(new ExitHandler(new ArgsMap(args).get("password","admin")), null)
  * .startServer(8080);
+ * 可以使用main函数的args提供参数转ArgsMap动态设置port和退出密码等参数。
  */
 public class SocketHttpHelper {
     boolean shouldGoOn = true;
@@ -25,21 +25,35 @@ public class SocketHttpHelper {
     //注册的，需要处理的handler。
     List<UrlHandler> registerHanlder = Collections.synchronizedList(new ArrayList<UrlHandler>());
 
+    public static List<SocketHttpHelper> socketHttps = new ArrayList<>();
+
     public SocketHttpHelper() {
         this(true);
     }
 
+    /**
+     * @param autoAddStaticResource
+     */
     public SocketHttpHelper(boolean autoAddStaticResource) {
+        SocketHttpHelper.socketHttps.add(this);
         //静态资源处理，先查找jar包目录资源，然后查找jar包内部资源. 自己稍后注册不同的目录也可
         if (autoAddStaticResource) {
             registerHanlder.add(new StaticResourceHandler(SimpleTools.getRootClassPath()));
             registerHanlder.add(new InnerStaticResourceHanlder());
         }
+
     }
 
     public SocketHttpHelper setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
         return this;
+    }
+
+    public static void stopAll() {
+        for (SocketHttpHelper httpHelper : socketHttps) {
+            httpHelper.stop();
+        }
+        socketHttps.clear();
     }
 
     public void stop() {
@@ -61,6 +75,24 @@ public class SocketHttpHelper {
         start(configPort());
     }
 
+    /**
+     * 使用main函数的设置进行启动。两个参数：password port
+     *
+     * @param args
+     */
+    public void startWithMainArgs(String[] args) {
+        ArgsMap argsMap = new ArgsMap(args);
+        String pwd = argsMap.get("password", "admin");
+        int port = argsMap.getInt("port", 18082);
+        this.setAutoExit(new ExitHandler(pwd), null)
+                .start(port);
+    }
+
+    /**
+     * 指定端口号启动。
+     *
+     * @param port
+     */
     public void start(int port) {
         if (isGoOn) return;
         isGoOn = true;
@@ -475,6 +507,19 @@ public class SocketHttpHelper {
     }
 
     /**
+     * 设置自动退出。 url： http://localhost:port/exit?password=yourpassword
+     *
+     * @param exitHandler
+     * @param onException
+     * @return
+     */
+    private SocketHttpHelper setAutoExit(ExitHandler exitHandler, HandlerAnnotationHandler.OnException onException) {
+        this.addHandlerByObject(exitHandler, onException);
+        return this;
+    }
+
+
+    /**
      * this is sample
      *
      * @param args
@@ -483,7 +528,8 @@ public class SocketHttpHelper {
     public static void main(String[] args) throws IOException {
         //添加自定义handler并启动 可以指定端口号
         new SocketHttpHelper()
-                .addHandlerByClass(HomeHandler.class,null)
-                .start();
+                .addHandlerByClass(HomeHandler.class, null)
+                .startWithMainArgs(args);
     }
+
 }

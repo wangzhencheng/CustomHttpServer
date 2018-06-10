@@ -3,9 +3,7 @@ package com.wzc.httpServer.common;
 import com.wzc.httpServer.core.Request;
 import com.wzc.httpServer.core.Response;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 
 public class SimpleTools {
@@ -168,6 +166,49 @@ public class SimpleTools {
         }
 
     }
+
+
+    public static void close(Closeable closeable) {
+        try {
+            if (null != closeable)
+                closeable.close();
+        } catch (Exception ex) {
+
+        }
+    }
+
+    public static String readStringFromIs(InputStream is, String charset) {
+        String result = null;// 返回结果字符串
+        try {
+            result = new String(readBytesFromIs(is),charset);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static byte[] readBytesFromIs(InputStream is) {
+        byte[] bytes=null;
+        ByteArrayOutputStream bos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024];
+            int l = -1;
+
+            while ((l = is.read(b)) > 0) {
+                bos.write(b, 0, l);
+            }
+            bos.flush();
+            bytes=bos.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            close(is);
+            close(bos);
+        }
+        return bytes;
+    }
+
 
     public interface OnSplitByte {
         boolean onSplitByte(byte[] source, byte[] breaker, int i, byte[] block);
