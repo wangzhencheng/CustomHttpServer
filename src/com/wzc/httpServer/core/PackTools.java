@@ -27,11 +27,11 @@ public class PackTools {
                 dirFile.mkdirs();
             }
             String readmeTxt = getContent("readme.txt");
-            readmeTxt += "\r\n当前端口号：" + port;
+            readmeTxt += "\r\n当前地址 http://localhost:" + port+"/index.html";
             writeTo(readmeTxt.getBytes("utf-8"), outDir, "readme.txt");
 
             String runVbs = getContent("run.vbs");
-            runVbs = String.format(runVbs, port, browserExePath, port);
+            runVbs = String.format(runVbs, port, browserExePath);
             writeTo(runVbs.getBytes("utf-8"), outDir, "run.vbs");
 
             copyByFileName(outDir, "SimpleHttp.class");
