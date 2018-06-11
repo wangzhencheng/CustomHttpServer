@@ -81,9 +81,10 @@ public class PackTools {
         //指定端口号  浏览器exe路径
         //将readme.txt  run.vbs SimpleHttp.class stop.vbs都copy过去
         //替换run.vbs stop.vbs中的端口和浏览器路径
-
         String dir = "E:\\work_source\\javaFx\\SimplestClient\\test";
-        pack(dir, "D:\\wzc_pro\\firefox\\firefox.exe", "18180");
+        String browserPath = "D:\\wzc_pro\\firefox\\firefox.exe";
+        String port = "18180";
+        pack(dir, browserPath, port);
 
     }
 }
