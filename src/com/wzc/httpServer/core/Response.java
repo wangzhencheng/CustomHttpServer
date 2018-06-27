@@ -1,5 +1,6 @@
 package com.wzc.httpServer.core;
 
+import com.wzc.httpServer.common.ClassPathTools;
 import com.wzc.httpServer.common.CustomJsonMapper;
 import com.wzc.httpServer.common.SimpleTools;
 
@@ -60,7 +61,7 @@ public class Response {
     public static Response view(String htmlFileAbsPath) {
         Response response = null;
         try {
-            URL realURL = SimpleTools.getURL(htmlFileAbsPath);
+            URL realURL = ClassPathTools.getURL(htmlFileAbsPath);
             response = new Response(200, "ok", realURL.openStream());
             response.getHeaders().putAll(
                     Response.resolveFileTypeHeader(SimpleTools.getUrlFileName(realURL.getPath()),
@@ -78,7 +79,7 @@ public class Response {
      * @return
      */
     public static File outViewFile(String outFilePath) {
-        File file = StaticResourceHandler.resolveStaticResourceFile(outFilePath, SimpleTools.getRootClassPath());
+        File file = StaticResourceHandler.resolveStaticResourceFile(outFilePath, ClassPathTools.getOutClassPath(null));
         return file;
     }
 

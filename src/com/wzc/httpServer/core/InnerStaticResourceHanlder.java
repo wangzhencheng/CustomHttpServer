@@ -1,5 +1,6 @@
 package com.wzc.httpServer.core;
 
+import com.wzc.httpServer.common.ClassPathTools;
 import com.wzc.httpServer.common.SimpleTools;
 
 import java.net.URL;
@@ -22,7 +23,7 @@ public class InnerStaticResourceHanlder implements SocketHttpHelper.UrlHandler {
             uri = uri.substring(0, spliter);
         }
 
-        URL url = SimpleTools.getURL(uri);
+        URL url = ClassPathTools.getURL(uri);
         return url;
     }
 

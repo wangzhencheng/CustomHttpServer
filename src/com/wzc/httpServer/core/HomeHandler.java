@@ -1,7 +1,7 @@
 package com.wzc.httpServer.core;
 
+import com.wzc.httpServer.common.ClassPathTools;
 import com.wzc.httpServer.common.RespData;
-import com.wzc.httpServer.common.SimpleTools;
 
 import java.io.File;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class HomeHandler {
     }
 
     private Object staticResource(Request request) {
-        File file = StaticResourceHandler.resolveStaticResourceFile(request, SimpleTools.getRootClassPath());
+        File file = StaticResourceHandler.resolveStaticResourceFile(request, ClassPathTools.getOutClassPath(null));
         return file;
     }
 

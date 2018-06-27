@@ -1,10 +1,13 @@
 package com.wzc.httpServer.core;
 
+import com.wzc.httpServer.common.ClassPathTools;
 import com.wzc.httpServer.common.SimpleTools;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,7 +41,9 @@ public class SocketHttpHelper {
         SocketHttpHelper.socketHttps.add(this);
         //静态资源处理，先查找jar包目录资源，然后查找jar包内部资源. 自己稍后注册不同的目录也可
         if (autoAddStaticResource) {
-            registerHanlder.add(new StaticResourceHandler(SimpleTools.getRootClassPath()));
+            //外部目录
+            registerHanlder.add(new StaticResourceHandler(ClassPathTools.getOutClassPath(null)));
+            //内部目录
             registerHanlder.add(new InnerStaticResourceHanlder());
         }
 
@@ -490,7 +495,7 @@ public class SocketHttpHelper {
     public static int configPort(String propertiesFileName, String key) {
         if (propertiesFileName == null) propertiesFileName = "config.properties";
         if (key == null) key = "port";
-        File file = new File(SimpleTools.getRootClassPath(), propertiesFileName);
+        File file = new File(ClassPathTools.getOutClassPath(null), propertiesFileName);
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(file));
@@ -527,6 +532,8 @@ public class SocketHttpHelper {
      */
     public static void main(String[] args) throws IOException {
         //添加自定义handler并启动 可以指定端口号
+        ClassPathTools.init(SocketHttpHelper.class);
+
         new SocketHttpHelper()
                 .addHandlerByClass(HomeHandler.class, null)
                 .startWithMainArgs(args);
