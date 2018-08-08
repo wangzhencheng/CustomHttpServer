@@ -208,7 +208,7 @@ public class SocketHttpHelper {
     private void service(ExecutorService es, Socket socket) {
         es.submit(new Runnable() {
             @Override
-            public void run() {
+            public synchronized void run() {
                 InputStream is = null;
                 OutputStream os = null;
                 try {

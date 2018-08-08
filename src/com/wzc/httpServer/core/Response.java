@@ -186,6 +186,9 @@ public class Response {
         headers.put("Cache-Control", "no-cache,must-revalidate");
 
         headers.put("Expires", "Fri, 30 Oct 1998 14:19:41");//test
+
+        headers.put("Access-Control-Allow-Headers", "Origin,X-Requested-With,Accept,Content-Type,XFILENAME,XFILECATEGORY,XFILESIZE");
+        headers.put("Accept", "*/*");
     }
 
     public int getCode() {
@@ -305,8 +308,8 @@ public class Response {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            if (null != printWriter)
-                printWriter.close();
+//            if (null != printWriter)
+//                printWriter.close();
         }
     }
 
