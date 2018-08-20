@@ -18,6 +18,7 @@ public class InnerStaticResourceHanlder implements SocketHttpHelper.UrlHandler {
 
     private URL resolveUrl(Request request) {
         String uri = request.getUri();
+        if (uri == null) uri = "";
         int spliter = uri.indexOf("?");
         if (spliter > -1) {
             uri = uri.substring(0, spliter);

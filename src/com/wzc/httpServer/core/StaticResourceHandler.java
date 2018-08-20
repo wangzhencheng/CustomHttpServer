@@ -17,13 +17,15 @@ public class StaticResourceHandler implements SocketHttpHelper.UrlHandler {
     @Override
     public boolean matchRequest(Request request) {
         File file = resolveStaticResourceFile(request, serverPath);
-        if (file.exists()) {
+        boolean match=file.exists()&&file.canRead()&&!file.isDirectory();
+        if (match) {
             cacheFile.put(request, file);
         }
-        return file.exists();
+        return match;
     }
 
     public static File resolveStaticResourceFile(String uri, String serverPath) {
+        if (uri == null) uri = "";
         int spliter = uri.indexOf("?");
         if (spliter > -1) {
             uri = uri.substring(0, spliter);

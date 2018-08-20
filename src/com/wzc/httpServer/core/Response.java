@@ -28,7 +28,7 @@ public class Response {
      */
     public Response(int code, String message, Object body) {
         init();
-        body=fixBody(body);
+        body = fixBody(body);
         this.code = code;
         this.message = message;
         this.body = body;
@@ -37,6 +37,7 @@ public class Response {
 
     /**
      * 只支持字符串 文件 输入流。其他格式转成对应支持的格式，或者使用OutputStream自行输出
+     *
      * @param body
      * @return
      */
@@ -92,6 +93,9 @@ public class Response {
      */
     public static HashMap<String, String> resolveFileTypeHeader(String fileName, long fileLen) {
         HashMap<String, String> headers = new HashMap<>();
+        if(fileName==null||fileName.length()<=0){
+            return headers;
+        }
         try {
 
             String binaryContentType = "application/octet-stream";
@@ -239,7 +243,7 @@ public class Response {
                 os.write(b, 0, l);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
         } finally {
             if (null != inputStream)
                 try {
@@ -300,7 +304,11 @@ public class Response {
                     responseInputStream(inputStream, os);
                 } else if (body instanceof File) {
                     File bodyFile = (File) body;
-                    responseInputStream(new FileInputStream(bodyFile), os);
+                    if (bodyFile.exists() && !bodyFile.isDirectory() && bodyFile.canRead()) {
+                        responseInputStream(new FileInputStream(bodyFile), os);
+                    } else {
+                        System.out.println("文件不存在或无权限");
+                    }
                 }
 
             }

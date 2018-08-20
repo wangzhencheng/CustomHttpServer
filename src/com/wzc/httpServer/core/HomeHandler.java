@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class HomeHandler {
 
     @Handler(value = {"/", "/index"})
-    public Object index(Request request) {
+    public Object index(Request request) throws InterruptedException {
         if (request.getFileParams() != null && request.getFileParams().size() > 0) {
             for (FileParam fileParam : request.getAllFileParams()) {
                 fileParam.transferFile("C:\\Users\\Administrator\\Desktop\\新建文件夹\\ceshi\\" + fileParam.getFileName());
@@ -56,6 +56,7 @@ public class HomeHandler {
 
         return map;
     }
+
 
 
 }

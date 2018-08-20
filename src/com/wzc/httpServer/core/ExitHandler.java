@@ -2,6 +2,9 @@ package com.wzc.httpServer.core;
 
 import com.wzc.httpServer.common.RespData;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * 用于停止http服务器。
  */
@@ -26,7 +29,14 @@ public class ExitHandler {
     public Object exit(Request request) {
         String password=request.getParam("password");
         if(this.password.equals(password)){
-            SocketHttpHelper.stopAll();
+            Timer timer=new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    SocketHttpHelper.stopAll();
+                    timer.cancel();
+                }
+            },500);
             return RespData.success("exit");
         }
         return RespData.error("错误的密码");

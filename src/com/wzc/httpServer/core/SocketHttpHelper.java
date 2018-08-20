@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 简易简单粗暴的本地HttpServer，用法如下：
@@ -23,12 +24,17 @@ import java.util.concurrent.Executors;
 public class SocketHttpHelper {
     boolean shouldGoOn = true;
     boolean isGoOn = false;
-    int threadPoolSize = 2;
+    int threadPoolSize = 8;
     ServerSocket serverSocket = null;
     //注册的，需要处理的handler。
     List<UrlHandler> registerHanlder = Collections.synchronizedList(new ArrayList<UrlHandler>());
 
     public static List<SocketHttpHelper> socketHttps = new ArrayList<>();
+    private ExecutorService es;
+
+    //保存当前全部的连接服务
+    private ArrayList<ServiceRunnable> allServices = new ArrayList<>();
+    private ReentrantReadWriteLock.WriteLock allServicesLock = new ReentrantReadWriteLock().writeLock();
 
     public SocketHttpHelper() {
         this(true);
@@ -64,12 +70,26 @@ public class SocketHttpHelper {
     public void stop() {
         shouldGoOn = false;
         isGoOn = false;
+
+        allServicesLock.lock();
+        for (int i = allServices.size() - 1; i >= 0; i--) {
+            allServices.get(i).cancel();
+        }
+        allServices.clear();
+        allServicesLock.unlock();
+
         try {
             if (null != serverSocket && !serverSocket.isClosed())
                 serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+//            e.printStackTrace();
         }
+
+        if (null != es) {
+            es.shutdownNow();
+        }
+
+        es = null;
         serverSocket = null;
     }
 
@@ -102,13 +122,14 @@ public class SocketHttpHelper {
         if (isGoOn) return;
         isGoOn = true;
         shouldGoOn = true;
-        ExecutorService es = Executors.newFixedThreadPool(threadPoolSize);
+        es = Executors.newFixedThreadPool(threadPoolSize + 1);
 
         try {
+            startDemonThread(es);
             serverSocket = new ServerSocket(port);
             //该句话表示服务已启动，同时和SpringBoot项目保持一致，可以复用之前的JavaFxApp，嘎嘎
             System.out.println("JVM running for custom http server! port:" + port);
-            while (shouldGoOn) {
+            while (shouldGoOn && !serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
 //                socket.setSoTimeout(5000);
                 socket.setKeepAlive(false);
@@ -120,8 +141,33 @@ public class SocketHttpHelper {
             ex.printStackTrace();
         } finally {
             stop();
-            es.shutdown();
         }
+    }
+
+    /**
+     * 启动一个守护线程
+     *
+     * @param es
+     */
+    private void startDemonThread(ExecutorService es) {
+        es.submit(() -> {
+            while (shouldGoOn && !Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(250);
+                    allServicesLock.lock();
+                    for (int i = allServices.size() - 1; i >= 0; i--) {
+                        allServices.get(i).checkStep();
+                        if (allServices.get(i).isClosed()) {
+                            allServices.remove(i);
+                        }
+                    }
+                    allServicesLock.unlock();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            System.out.println("daemon over!");
+        });
     }
 
     /**
@@ -206,27 +252,82 @@ public class SocketHttpHelper {
 
 
     private void service(ExecutorService es, Socket socket) {
-        es.submit(new Runnable() {
-            @Override
-            public synchronized void run() {
-                InputStream is = null;
-                OutputStream os = null;
-                try {
-                    //获取HTTP请求头
-                    is = socket.getInputStream();
-//                    System.out.println("is len:" + is.available());
-                    os = socket.getOutputStream();
-                    Response response = onRequest(resolveRequest(is, os));
-                    responseSocket(os, response);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    closeClosable(is);
-                    closeClosable(os);
-                    closeClosable(socket);
-                }
+        allServicesLock.lock();
+        ServiceRunnable serviceRunnable = new ServiceRunnable(socket, false);
+        allServices.add(serviceRunnable);
+        es.submit(serviceRunnable);
+        allServicesLock.unlock();
+    }
+
+    public class ServiceRunnable implements Runnable {
+        private Socket socket;
+        InputStream is = null;
+        OutputStream os = null;
+        long lastStepTime = -1;
+        long stepDuration = 5 * 1000;//每一步的操作，不能超过 n*1000 ms
+
+        boolean disableStepDurationCheck = false;//禁用每步的超时检测
+
+        public ServiceRunnable(Socket socket, boolean disableStepDurationCheck) {
+            this.socket = socket;
+            this.disableStepDurationCheck = disableStepDurationCheck;
+            step();
+        }
+
+        public boolean isClosed() {
+            return socket == null || socket.isClosed();
+        }
+
+        /**
+         * 重要函数，耗时操作，需要主动标记。避免超时被自动关闭
+         */
+        public void step() {
+            if (disableStepDurationCheck || isClosed()) return;
+            this.lastStepTime = System.currentTimeMillis();
+        }
+
+        /**
+         * 检测当前这一步的耗时，是否超过了规定时间，超时则关闭socket
+         */
+        public synchronized void checkStep() {
+            if (disableStepDurationCheck || isClosed()) return;
+
+            if (System.currentTimeMillis() - this.lastStepTime > stepDuration) {
+                cancel();
             }
-        });
+        }
+
+        @Override
+        public void run() {
+            try {
+
+                //获取HTTP请求头
+                is = socket.getInputStream();
+//                    System.out.println("is len:" + is.available());
+                os = socket.getOutputStream();
+                Request request = resolveRequest(this, is, os);
+
+                //响应不需要计算时间，允许超长时间响应
+                disableStepDurationCheck = true;
+
+                Response response = onRequest(request);
+                responseSocket(os, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                stop();
+            }
+        }
+
+        public void stop() {
+            closeClosable(is);
+            closeClosable(os);
+            closeClosable(socket);
+        }
+
+        public void cancel() {
+            stop();
+        }
     }
 
     private void closeClosable(Closeable closeable) {
@@ -238,7 +339,7 @@ public class SocketHttpHelper {
             }
     }
 
-    private Request resolveRequest(InputStream is, OutputStream os) throws IOException {
+    private Request resolveRequest(ServiceRunnable serviceRunnable, InputStream is, OutputStream os) throws IOException {
         Request request = new Request();
         request.headers = new HashMap<>();
         request.params = new HashMap<>();
@@ -274,6 +375,8 @@ public class SocketHttpHelper {
                     break;
                 }
             }
+
+            serviceRunnable.step();
 
             //重新读取body
             if (nextByte == -1) {//-1 表示没有body了。
@@ -314,12 +417,14 @@ public class SocketHttpHelper {
                                 //如何解析文件，都塞到内存？ 暂时支持小文件吧，写内存中
                                 String boundary = resolveBoundary(request.getHeaders().get("content-type"));
                                 if (boundary != null && boundary.length() > 0) {
+                                    serviceRunnable.step();
                                     byte[] allFileAndParamsBuffer = new byte[contentLen];
                                     is.read(allFileAndParamsBuffer);
                                     //需要根据分隔符进行分隔；
                                     SimpleTools.splitBytes(allFileAndParamsBuffer, ("--" + boundary).getBytes("utf-8"), new SimpleTools.OnSplitByte() {
                                         @Override
                                         public boolean onSplitByte(byte[] source, byte[] breaker, int i, byte[] block) {
+                                            serviceRunnable.step();
                                             //获取到的进行处理
                                             if (i >= source.length) return false;
                                             if (block.length == 0) return true;
@@ -352,14 +457,18 @@ public class SocketHttpHelper {
 
                             } else {
                                 int bufferLen = 2048;
-                                if (contentLen % bufferLen == bufferLen) {//如果整除，可能会出现无法正好读完还在等待的情况。
+                                if (contentLen % bufferLen == bufferLen
+                                        || contentLen % bufferLen == 0) {//如果整除，可能会出现无法正好读完还在等待的情况。
                                     bufferLen += 1;
                                 }
                                 byte[] buffer = new byte[bufferLen];
                                 int l = -1;
+                                int readSumLen = 0;
                                 while ((l = is.read(buffer)) != -1) {
+                                    serviceRunnable.step();//计时
                                     bosBody.write(buffer, 0, l);
-                                    if (l < buffer.length) {
+                                    readSumLen += l;
+                                    if (readSumLen >= contentLen) {//l < buffer.length
                                         break;
                                     }
                                 }
@@ -378,7 +487,7 @@ public class SocketHttpHelper {
             }
             resolveParams(request.params, request.uri, request.headers, request.body);
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
         } finally {
             closeClosable(bosHeader);
         }
